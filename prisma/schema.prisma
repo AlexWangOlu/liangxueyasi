@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Vocabulary {
+  id        Int      @id @default(autoincrement())
+  bookId    String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  words     Word[]
+}
+
+model Word {
+  id           Int            @id @default(autoincrement())
+  wordId       String         @unique
+  wordRank     Int
+  headWord     String
+  ukPhone      String?        @map("uk_phone")
+  usPhone      String?        @map("us_phone")
+  phone        String?
+  sentences    Json?
+  phrases      Json?
+  synonyms     Json?
+  antonyms     Json?
+  remMethod    String?        @map("rem_method")
+  related      Json?
+  translations Json?          @map("translations")
+  vocabularyId Int            @map("vocabulary_id")
+  createdAt    DateTime       @default(now())
+  vocabulary   Vocabulary     @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
+  favorites    WordFavorite[]
+  mistakes     WordMistake[]
+  studyLogs    WordStudyLog[]
+}
+
+model WordFavorite {
+  id        Int      @id @default(autoincrement())
+  userId    String   @default("anonymous")
+  wordId    Int      @map("word_id")
+  createdAt DateTime @default(now())
+  word      Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, wordId])
+  @@map("word_favorites")
+}
+
+model WordMistake {
+  id            Int      @id @default(autoincrement())
+  userId        String   @default("anonymous")
+  wordId        Int      @map("word_id")
+  mistakeType   String   @map("mistake_type")
+  correctAnswer String   @map("correct_answer")
+  wrongAnswer   String?  @map("wrong_answer")
+  count         Int      @default(1)
+  lastWrongAt   DateTime @default(now()) @map("last_wrong_at")
+  createdAt     DateTime @default(now())
+  word          Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, wordId, mistakeType])
+  @@map("word_mistakes")
+}
+
+model WordStudyLog {
+  id        Int      @id @default(autoincrement())
+  userId    String   @default("anonymous")
+  wordId    Int      @map("word_id")
+  studyMode String   @map("study_mode")
+  status    String
+  duration  Int?
+  createdAt DateTime @default(now())
+  word      Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@map("word_study_logs")
+}
+
+model WritingQuestion {
+  id        Int           @id @default(autoincrement())
+  year      Int
+  date      String
+  variant   String?
+  en        String
+  zh        String
+  topic     String
+  createdAt DateTime      @default(now())
+  views     WritingView[]
+}
+
+model WritingView {
+  id         Int             @id @default(autoincrement())
+  side       String
+  claimZh    String?         @map("claim_zh")
+  claimEn    String?         @map("claim_en")
+  analysisZh String?         @map("analysis_zh")
+  analysisEn String?         @map("analysis_en")
+  questionId Int             @map("question_id")
+  question   WritingQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("writing_views")
+}
+
+model WritingRecord {
+  id                Int      @id @default(autoincrement())
+  userId            String   @default("anonymous")
+  questionEn        String   @map("question_en")
+  questionZh        String   @map("question_zh")
+  topic             String
+  essay             String
+  score             Float
+  taskAchievement   Float    @map("task_achievement")
+  coherenceCohesion Float    @map("coherence_cohesion")
+  lexicalResource   Float    @map("lexical_resource")
+  grammaticalRange  Float    @map("grammatical_range")
+  feedback          String?
+  duration          Int
+  createdAt         DateTime @default(now())
+
+  @@map("writing_records")
+}
