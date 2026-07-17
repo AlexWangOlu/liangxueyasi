@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:20-alpine AS base
 
 WORKDIR /app
 
@@ -7,7 +7,10 @@ RUN npm ci --only=production
 
 COPY . .
 
-RUN npx prisma generate
+ENV NODE_ENV=production
+ENV PORT=3000
+
+RUN npm run build
 
 EXPOSE 3000
 
