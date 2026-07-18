@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: favorites.map((f) => f.word),
+      data: favorites.map((f: { word: typeof favorites[0]["word"] }) => f.word),
       pagination: {
         page,
         pageSize,
