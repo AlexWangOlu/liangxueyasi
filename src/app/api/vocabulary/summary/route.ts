@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
         todayStudied,
         totalFavorites,
         totalMistakes,
-        recentActivity: recentActivity.map((log) => ({
+        recentActivity: recentActivity.map((log: typeof recentActivity[0]) => ({
           word: log.word.headWord,
           mode: log.studyMode,
           status: log.status,

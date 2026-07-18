@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: mistakes.map((m) => ({
+      data: mistakes.map((m: typeof mistakes[0]) => ({
         ...m.word,
         mistakeCount: m.count,
         lastWrongAt: m.lastWrongAt,

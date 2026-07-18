@@ -17,8 +17,8 @@ export async function GET() {
     ]);
 
     return NextResponse.json({
-      topics: topics.map((t) => t.topic),
-      years: years.map((y) => y.year),
+      topics: topics.map((t: typeof topics[0]) => t.topic),
+      years: years.map((y: typeof years[0]) => y.year),
     });
   } catch (error) {
     console.error("API Error:", error);

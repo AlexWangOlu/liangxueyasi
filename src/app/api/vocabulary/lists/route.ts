@@ -9,7 +9,7 @@ export async function GET() {
     });
 
     return NextResponse.json({
-      data: lists.map((l) => ({
+      data: lists.map((l: typeof lists[0]) => ({
         id: l.id,
         bookId: l.bookId,
         name: l.name,
